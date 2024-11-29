@@ -1,0 +1,47 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - main
+    depends_on:
+      - backend
+
+  backend:
+    build: 
+      context: ./backend
+    container_name: backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/app
+    networks:
+      - main
+
+  mongo:
+    build:
+      context: ./mongo
+    container_name: mongodb
+    ports:
+     - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - main
+
+
+
+volumes:
+  mongo-data:
+    driver: local
+    
+networks:
+  main:
+    driver: bridge
